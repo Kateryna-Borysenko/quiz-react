@@ -5,8 +5,8 @@ import FinishedQuiz from '../../components/ActiveQuiz/FinishedQuiz/FinishedQuiz'
 
 class Quiz extends Component {
   state = {
-    // isFinished: false, //по умолчанию наш отросник не закончен
-    isFinished: true,
+    isFinished: false, //по умолчанию наш отросник не закончен
+    results: {}, //{ [id]: 'success'} или {[id]: 'error' } для всех вопросов
     activeQuestion: 0,
     answerState: null, //будет храниться инфо о текущем клике пользователя (либо правильный ответ, либо нет){ [id]: 'success'} или {[id]: 'error' }
     quiz: [
@@ -48,12 +48,18 @@ class Quiz extends Component {
     }
     //получаем вопрос из массива вопросов
     const question = this.state.quiz[this.state.activeQuestion];
-    //проверка правильности ответа
 
+    const results = this.state.results;
+    //проверка правильности ответа
     //переключение не сразу на сл. вопрос, а через 1,5 сек, если ответ верный
     if (question.rightAnswerId === answerId) {
+      //если с первого раза ответили правильно,должны положить значение  'success'
+      if (!results[question.id]) {
+        results[question.id] = 'success';
+      }
       this.setState({
         answerState: { [answerId]: 'success' },
+        results,
       });
       const timeout = window.setTimeout(() => {
         //если закончились вопросы
@@ -68,8 +74,11 @@ class Quiz extends Component {
         window.clearTimeout(timeout); //чтобы не было утечки памяти
       }, 1000);
     } else {
+      //если ответили не правильно и меняем состояние в строке 78
+      results[question.id] = 'error';
       this.setState({
         answerState: { [answerId]: 'error' },
+        results,
       });
     }
   };
@@ -78,13 +87,26 @@ class Quiz extends Component {
     //если номер вопроса равен длинне массива вопросов
     return this.state.activeQuestion + 1 === this.state.quiz.length;
   };
+  //для повторного прохождения теста обнуляем
+  retryHandler = () => {
+    this.setState({
+      activeQuestion: 0,
+      answerState: null,
+      isFinished: false,
+      results: {},
+    });
+  };
   render() {
     return (
       <div className={s.Quiz}>
         <div className={s.QuizWrapper}>
           <h1>Ответьте на все вопросы</h1>
           {this.state.isFinished ? (
-            <FinishedQuiz />
+            <FinishedQuiz
+              results={this.state.results}
+              quiz={this.state.quiz}
+              onRetry={this.retryHandler}
+            />
           ) : (
             <ActiveQuiz
               answers={this.state.quiz[this.state.activeQuestion].answers} //показывает номер вопроса
