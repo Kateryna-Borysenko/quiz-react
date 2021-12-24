@@ -10,6 +10,8 @@ const AnswersList = props => (
           key={index}
           answer={answer}
           onAnswerClick={props.onAnswerClick}
+          //если есть props.state (по умолчанию он null)
+          state={props.state ? props.state[answer.id] : null}
         />
       );
     })}
