@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import s from './Quiz.module.css';
 import ActiveQuiz from '../../components/ActiveQuiz/ActiveQuiz';
+import FinishedQuiz from '../../components/ActiveQuiz/FinishedQuiz/FinishedQuiz';
 
 class Quiz extends Component {
   state = {
+    // isFinished: false, //по умолчанию наш отросник не закончен
+    isFinished: true,
     activeQuestion: 0,
     answerState: null, //будет храниться инфо о текущем клике пользователя (либо правильный ответ, либо нет){ [id]: 'success'} или {[id]: 'error' }
     quiz: [
@@ -55,7 +58,7 @@ class Quiz extends Component {
       const timeout = window.setTimeout(() => {
         //если закончились вопросы
         if (this.isQuizFinished()) {
-          console.log('last question');
+          this.setState({ isFinished: true });
         } else {
           this.setState({
             activeQuestion: this.state.activeQuestion + 1,
@@ -80,15 +83,18 @@ class Quiz extends Component {
       <div className={s.Quiz}>
         <div className={s.QuizWrapper}>
           <h1>Ответьте на все вопросы</h1>
-
-          <ActiveQuiz
-            answers={this.state.quiz[this.state.activeQuestion].answers} //показывает номер вопроса
-            question={this.state.quiz[this.state.activeQuestion].question} //показывает номер вопроса
-            onAnswerClick={this.onAnswerClickHandler}
-            quizLength={this.state.quiz.length}
-            answerNumber={this.state.activeQuestion + 1} //отображение для пользователя(индекс вопроса начинается с 0) делаем +1
-            state={this.state.answerState} //отображаем на каждом элементе правильный ответ или нет
-          />
+          {this.state.isFinished ? (
+            <FinishedQuiz />
+          ) : (
+            <ActiveQuiz
+              answers={this.state.quiz[this.state.activeQuestion].answers} //показывает номер вопроса
+              question={this.state.quiz[this.state.activeQuestion].question} //показывает номер вопроса
+              onAnswerClick={this.onAnswerClickHandler}
+              quizLength={this.state.quiz.length}
+              answerNumber={this.state.activeQuestion + 1} //отображение для пользователя(индекс вопроса начинается с 0) делаем +1
+              state={this.state.answerState} //отображаем на каждом элементе правильный ответ или нет
+            />
+          )}
         </div>
       </div>
     );
