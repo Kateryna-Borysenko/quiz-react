@@ -4842,6 +4842,11 @@
   "resolved" "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz"
   "version" "1.9.1"
 
+"is_js@^0.9.0":
+  "integrity" "sha1-CrlFQFArp6+iTIVqqYVWFmnpxS0="
+  "resolved" "https://registry.npmjs.org/is_js/-/is_js-0.9.0.tgz"
+  "version" "0.9.0"
+
 "is-arguments@^1.0.4":
   "integrity" "sha512-8Q7EARjzEnKpt/PCD7e1cgUS0a6X8u5tdSiMqXhojOdoV9TsMsiO+9VLC5vAmO8N7/GmXn7yjR8qnA6bVAEzfA=="
   "resolved" "https://registry.npmjs.org/is-arguments/-/is-arguments-1.1.1.tgz"
