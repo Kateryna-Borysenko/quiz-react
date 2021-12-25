@@ -13,6 +13,7 @@ import is from 'is_js';
 
 export class Auth extends Component {
   state = {
+    isFormValid: false,
     formControls: {
       email: {
         value: '',
@@ -88,6 +89,18 @@ export class Auth extends Component {
     control.valid = this.validateControl(control.value, control.validation); //новое значение введенное и объект валидации код 18 32
     formControls[controlName] = control;
     this.setState({ formControls });
+    //проверка всей формы на валидность
+    let isFormValid = true;
+
+    //получим либо email либо password ур78-1:30
+    Object.keys(formControls).forEach(name => {
+      isFormValid = formControls[name].valid && isFormValid;
+    });
+
+    this.setState({
+      formControls,
+      isFormValid,
+    });
   };
 
   renderInput = () => {
@@ -118,10 +131,18 @@ export class Auth extends Component {
           <form className={s.AuthForm} onSubmit={this.submitHandler}>
             {/* ф-ция которая будет рендерить инпуты */}
             {this.renderInput()}
-            <Button type="success" onClick={this.loginHadler}>
+            <Button
+              type="success"
+              onClick={this.loginHadler}
+              disabled={!this.state.isFormValid}
+            >
               Войти
             </Button>
-            <Button type="primary" onClick={this.registerHadler}>
+            <Button
+              type="primary"
+              onClick={this.registerHadler}
+              disabled={!this.state.isFormValid}
+            >
               Зарегистрироваться
             </Button>
           </form>
