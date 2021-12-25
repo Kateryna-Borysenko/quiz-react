@@ -96,6 +96,12 @@ class Quiz extends Component {
       results: {},
     });
   };
+
+  //при клике в списке тестов можно проверить id
+  // componentDidMount() {
+  //   console.log('Quiz id:', this.props.match.params.id);
+  // }
+
   render() {
     return (
       <div className={s.Quiz}>
