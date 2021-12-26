@@ -3,6 +3,7 @@ import s from './QuizCreator.module.css';
 import Button from '../../../components/ActiveQuiz/UI/Button/Button';
 import Input from '../../../components/ActiveQuiz/UI/Button/Input/Input';
 import { createControl } from '../../../form/formFramework';
+import Select from '../../../components/ActiveQuiz/UI/Button/Select/Select';
 
 //ф-ция которая позволит не дублировать код будет создавать инпуты для варианов ответов // вспомогательная функция (Helper)
 const createOptionControl = number => {
@@ -36,6 +37,7 @@ export class QuizCreator extends Component {
   //собственный небольшой framework для создания формы
   state = {
     quiz: [], //будем хранить все вопросы
+    rightAnswerId: 1,
     formControls: createFormControls(),
   };
   // ------------------------- //
@@ -68,15 +70,32 @@ export class QuizCreator extends Component {
       );
     });
   };
+  selectChangeHandler = e => {
+    this.setState({ rightAnswerId: Number(e.target.value) });
+    console.log(this.state.rightAnswerId);
+  };
 
   render() {
+    const select = (
+      <Select
+        label="Выберите правилый ответ"
+        value={this.state.rightAnswerId}
+        onChange={this.selectChangeHandler}
+        options={[
+          { text: 1, value: 1 },
+          { text: 2, value: 2 },
+          { text: 3, value: 3 },
+          { text: 4, value: 4 },
+        ]}
+      />
+    );
     return (
       <div className={s.QuizCreator}>
         <div>
           <h1>Создание теста</h1>
           <form onSubmit={this.onSubmitHandler}>
             {this.renderControls()}
-            <select name="" id=""></select>
+            {select}
             <Button type="primary" onClick={this.addQuestionHandler}>
               Добавить вопрос
             </Button>
