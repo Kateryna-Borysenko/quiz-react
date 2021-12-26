@@ -3,6 +3,8 @@ import s from './QuizCreator.module.css';
 import Button from '../../../components/ActiveQuiz/UI/Button/Button';
 import Input from '../../../components/ActiveQuiz/UI/Button/Input/Input';
 import { createControl } from '../../../form/formFramework';
+import { validate } from '../../../form/formFramework';
+import { validateForm } from '../../../form/formFramework';
 import Select from '../../../components/ActiveQuiz/UI/Button/Select/Select';
 
 //ф-ция которая позволит не дублировать код будет создавать инпуты для варианов ответов // вспомогательная функция (Helper)
@@ -37,6 +39,7 @@ export class QuizCreator extends Component {
   //собственный небольшой framework для создания формы
   state = {
     quiz: [], //будем хранить все вопросы
+    isFormValid: false,
     rightAnswerId: 1,
     formControls: createFormControls(),
   };
@@ -44,11 +47,22 @@ export class QuizCreator extends Component {
   onSubmitHandler = e => {
     e.preventDefault();
   };
-  addQuestionHandler = () => {};
+  addQuestionHandler = e => {
+    e.preventDefault();
+  };
   createQuizHandler = () => {};
-  changeHandler = () => {};
+  changeHandler = (value, controlName) => {
+    //чтобы не мутировать объект создаём копию
+    const formControls = { ...this.state.formControls };
+    const control = { ...formControls[controlName] }; //получаем текущий input с которым question option1 option2 option3 option4 со всеми полями
+    control.touched = true;
+    control.value = value;
+    control.valid = validate(control.value, control.validation);
+    formControls[controlName] = control;
+    this.setState({ formControls, isFormValid: validateForm(formControls) });
+  };
 
-  renderControls = (value, controlName) => {
+  renderControls = () => {
     // получим ключи question option1 option2 option3 option4
     return Object.keys(this.state.formControls).map((controlName, index) => {
       const control = this.state.formControls[controlName]; //в control попадёт объект получиный по ключу
@@ -72,7 +86,7 @@ export class QuizCreator extends Component {
   };
   selectChangeHandler = e => {
     this.setState({ rightAnswerId: Number(e.target.value) });
-    console.log(this.state.rightAnswerId);
+    // console.log(this.state.rightAnswerId);
   };
 
   render() {
@@ -96,10 +110,20 @@ export class QuizCreator extends Component {
           <form onSubmit={this.onSubmitHandler}>
             {this.renderControls()}
             {select}
-            <Button type="primary" onClick={this.addQuestionHandler}>
+            <Button
+              type="primary"
+              onClick={this.addQuestionHandler}
+              disabled={!this.state.isFormValid}
+              // если форама не валижная то кнопка будет отключина
+            >
               Добавить вопрос
             </Button>
-            <Button type="success" onClick={this.createQuizHandler}>
+            <Button
+              type="success"
+              onClick={this.createQuizHandler}
+              disabled={this.state.quiz.length === 0}
+              // кнопка будет выключина до тех пор пока у нас нет вопросов в нашем тесте
+            >
               Создать тест
             </Button>
           </form>
