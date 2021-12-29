@@ -3,6 +3,7 @@ import s from './Auth.module.css';
 import Button from '../../../components/ActiveQuiz/UI/Button/Button';
 import Input from '../../../components/ActiveQuiz/UI/Button/Input/Input';
 import is from 'is_js';
+import axios from 'axios';
 
 //если использовать regex
 // const validateEmail = email => {
@@ -45,9 +46,41 @@ export class Auth extends Component {
       },
     },
   };
-  loginHadler = () => {};
+  loginHadler = async () => {
+    const authData = {
+      email: this.state.formControls.email.value,
+      password: this.state.formControls.password.value,
+      returnSecureToken: true,
+    };
+    //делаем запрос к базе
+    try {
+      const response = await axios.post(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBHGAzz22mPCTQnJHHkVoC84ahlL0gSTgk',
+        authData,
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  registerHadler = () => {};
+  registerHadler = async () => {
+    const authData = {
+      email: this.state.formControls.email.value,
+      password: this.state.formControls.password.value,
+      returnSecureToken: true,
+    };
+    //делаем запрос к базе
+    try {
+      const response = await axios.post(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBHGAzz22mPCTQnJHHkVoC84ahlL0gSTgk',
+        authData,
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   submitHandler = e => {
     e.preventDefault();
