@@ -6,6 +6,7 @@ import { createControl } from '../../../form/formFramework';
 import { validate } from '../../../form/formFramework';
 import { validateForm } from '../../../form/formFramework';
 import Select from '../../../components/ActiveQuiz/UI/Button/Select/Select';
+import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
 
 //ф-ция которая позволит не дублировать код будет создавать инпуты для варианов ответов // вспомогательная функция (Helper)
 const createOptionControl = number => {
@@ -47,10 +48,45 @@ export class QuizCreator extends Component {
   onSubmitHandler = e => {
     e.preventDefault();
   };
-  addQuestionHandler = e => {
-    e.preventDefault();
+
+  //при клике по кнопке создать вопрос
+  addQuestionHandler = event => {
+    event.preventDefault();
+    //создаём локальную копию массива quiz
+    // или так const quiz = [...this.state.quiz];
+    const quiz = this.state.quiz.concat();
+    const index = quiz.length + 1;
+
+    const { question, option1, option2, option3, option4 } =
+      this.state.formControls;
+    // нужно сформировать объект каждого из вопросов и положить его в массив quiz
+    const questionItem = {
+      question: question.value,
+      id: index,
+      rightAnswerId: this.state.rightAnswerId,
+      answers: [
+        { text: option1.value, id: option1.id },
+        { text: option2.value, id: option2.id },
+        { text: option3.value, id: option3.id },
+        { text: option4.value, id: option4.id },
+      ],
+    };
+
+    quiz.push(questionItem);
+
+    this.setState({
+      quiz,
+      isFormValid: false,
+      rightAnswerId: 1,
+      formControls: createFormControls(),
+    });
   };
-  createQuizHandler = () => {};
+  //при клике на кнопку создать тест
+  createQuizHandler = e => {
+    e.preventDefault();
+    console.log(this.state.quiz);
+    // TODO: Server для сохранения данных на backend
+  };
   changeHandler = (value, controlName) => {
     //чтобы не мутировать объект создаём копию
     const formControls = { ...this.state.formControls };
@@ -67,9 +103,8 @@ export class QuizCreator extends Component {
     return Object.keys(this.state.formControls).map((controlName, index) => {
       const control = this.state.formControls[controlName]; //в control попадёт объект получиный по ключу
       return (
-        <>
+        <Auxiliary key={controlName + index}>
           <Input
-            key={controlName + index}
             label={control.label}
             value={control.value}
             valid={control.valid}
@@ -80,12 +115,12 @@ export class QuizCreator extends Component {
           />
           {/* рендер по условию (нужно добавить линие только после вопроса */}
           {index === 0 ? <hr /> : null}
-        </>
+        </Auxiliary>
       );
     });
   };
   selectChangeHandler = e => {
-    this.setState({ rightAnswerId: Number(e.target.value) });
+    this.setState({ rightAnswerId: +e.target.value });
     // console.log(this.state.rightAnswerId);
   };
 
