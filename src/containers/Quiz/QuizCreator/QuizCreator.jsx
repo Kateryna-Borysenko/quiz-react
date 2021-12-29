@@ -7,6 +7,8 @@ import { validate } from '../../../form/formFramework';
 import { validateForm } from '../../../form/formFramework';
 import Select from '../../../components/ActiveQuiz/UI/Button/Select/Select';
 import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
+import axios from 'axios';
+import { logRoles } from '@testing-library/react';
 
 //ф-ция которая позволит не дублировать код будет создавать инпуты для варианов ответов // вспомогательная функция (Helper)
 const createOptionControl = number => {
@@ -81,11 +83,43 @@ export class QuizCreator extends Component {
       formControls: createFormControls(),
     });
   };
+  // axios.post('https://react-quiz-3e9b0.firebaseio.com/quizes.json', this.state.quiz)
+
   //при клике на кнопку создать тест
-  createQuizHandler = e => {
+  createQuizHandler = async e => {
     e.preventDefault();
-    console.log(this.state.quiz);
+
     // TODO: Server для сохранения данных на backend
+    // console.log(this.state.quiz);
+
+    try {
+      // const response  что бы вывести данные в консоль, а так можно удалить
+      const response = await axios.post(
+        'https://react-quiz-d260e-default-rtdb.firebaseio.com/quizzes.json',
+        this.state.quiz,
+      );
+      //как только сервер ответит мы должны обнулить state
+      this.setState({
+        quiz: [],
+        isFormValid: false,
+        rightAnswerId: 1,
+        formControls: createFormControls(),
+      });
+      // console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    //выше описан более современный способ записи
+    // axios
+    //   .post(
+    //     'https://react-quiz-d260e-default-rtdb.firebaseio.com/quizzes.json',
+    //     this.state.quiz,
+    //   )
+    //   .then(response => {
+    //     console.log(response);
+    //   })
+    //   .catch(error => console.log(error));
   };
   changeHandler = (value, controlName) => {
     //чтобы не мутировать объект создаём копию

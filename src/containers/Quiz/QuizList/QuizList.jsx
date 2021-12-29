@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import s from './QuizList.module.css';
 import { NavLink } from 'react-router-dom';
-
+import axios from 'axios';
 export class QuizList extends Component {
   renderQuizes = () => {
     return [1, 2, 3].map((quiz, index) => {
@@ -12,7 +12,14 @@ export class QuizList extends Component {
       );
     });
   };
-
+  //делаем get запрос на базу данных firebase от google
+  componentDidMount() {
+    axios
+      .get('https://react-quiz-d260e-default-rtdb.firebaseio.com/')
+      .then(response => {
+        console.log(response);
+      });
+  }
   render() {
     return (
       <div className={s.QuizList}>
