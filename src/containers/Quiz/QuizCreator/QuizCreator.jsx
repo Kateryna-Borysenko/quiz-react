@@ -7,8 +7,7 @@ import { validate } from '../../../form/formFramework';
 import { validateForm } from '../../../form/formFramework';
 import Select from '../../../components/ActiveQuiz/UI/Button/Select/Select';
 import Auxiliary from '../../../hoc/Auxiliary/Auxiliary';
-import axios from 'axios';
-import { logRoles } from '@testing-library/react';
+import axios from '../../../axios/axios-quiz';
 
 //ф-ция которая позволит не дублировать код будет создавать инпуты для варианов ответов // вспомогательная функция (Helper)
 const createOptionControl = number => {
@@ -94,10 +93,7 @@ export class QuizCreator extends Component {
 
     try {
       // const response  что бы вывести данные в консоль, а так можно удалить
-      const response = await axios.post(
-        'https://react-quiz-d260e-default-rtdb.firebaseio.com/quizzes.json',
-        this.state.quiz,
-      );
+      const response = await axios.post('/quizzes.json', this.state.quiz);
       //как только сервер ответит мы должны обнулить state
       this.setState({
         quiz: [],

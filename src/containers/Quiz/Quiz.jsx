@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import s from './Quiz.module.css';
 import ActiveQuiz from '../../components/ActiveQuiz/ActiveQuiz';
 import FinishedQuiz from '../../components/ActiveQuiz/FinishedQuiz/FinishedQuiz';
+import axios from '../../axios/axios-quiz';
+import Loader from '../../components/ActiveQuiz/UI/Loader/Loader';
 
 class Quiz extends Component {
   state = {
@@ -9,30 +11,8 @@ class Quiz extends Component {
     results: {}, //{ [id]: 'success'} или {[id]: 'error' } для всех вопросов
     activeQuestion: 0,
     answerState: null, //будет храниться инфо о текущем клике пользователя (либо правильный ответ, либо нет){ [id]: 'success'} или {[id]: 'error' }
-    quiz: [
-      {
-        question: 'Какого цвета небо?',
-        rightAnswerId: 2,
-        id: 1,
-        answers: [
-          { text: 'Черный', id: 1 },
-          { text: 'Синий', id: 2 },
-          { text: 'Красный', id: 3 },
-          { text: 'Зелёный', id: 4 },
-        ],
-      },
-      {
-        question: 'Мой год рождения?',
-        rightAnswerId: 1,
-        id: 2,
-        answers: [
-          { text: '1983', id: 1 },
-          { text: '1993', id: 2 },
-          { text: '1989', id: 3 },
-          { text: '2000', id: 4 },
-        ],
-      },
-    ],
+    quiz: [],
+    loading: true,
   };
   onAnswerClickHandler = answerId => {
     // console.log('answerId', answerId);
@@ -98,16 +78,31 @@ class Quiz extends Component {
   };
 
   //при клике в списке тестов можно проверить id
-  // componentDidMount() {
-  //   console.log('Quiz id:', this.props.match.params.id);
-  // }
+  async componentDidMount() {
+    try {
+      const response = await axios.get(
+        `/quizzes/${this.props.match.params.id}.json`,
+      );
+      const quiz = response.data;
+
+      this.setState({
+        quiz,
+        loading: false,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   render() {
     return (
       <div className={s.Quiz}>
         <div className={s.QuizWrapper}>
           <h1>Ответьте на все вопросы</h1>
-          {this.state.isFinished ? (
+
+          {this.state.loading ? (
+            <Loader />
+          ) : this.state.isFinished ? (
             <FinishedQuiz
               results={this.state.results}
               quiz={this.state.quiz}
@@ -115,12 +110,12 @@ class Quiz extends Component {
             />
           ) : (
             <ActiveQuiz
-              answers={this.state.quiz[this.state.activeQuestion].answers} //показывает номер вопроса
-              question={this.state.quiz[this.state.activeQuestion].question} //показывает номер вопроса
+              answers={this.state.quiz[this.state.activeQuestion].answers}
+              question={this.state.quiz[this.state.activeQuestion].question}
               onAnswerClick={this.onAnswerClickHandler}
               quizLength={this.state.quiz.length}
-              answerNumber={this.state.activeQuestion + 1} //отображение для пользователя(индекс вопроса начинается с 0) делаем +1
-              state={this.state.answerState} //отображаем на каждом элементе правильный ответ или нет
+              answerNumber={this.state.activeQuestion + 1}
+              state={this.state.answerState}
             />
           )}
         </div>

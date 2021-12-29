@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import s from './QuizList.module.css';
 import { NavLink } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../../../axios/axios-quiz';
 import Loader from '../../../components/ActiveQuiz/UI/Loader/Loader';
 
 export default class QuizList extends Component {
@@ -24,9 +24,7 @@ export default class QuizList extends Component {
   //99% случаев перед обращением к backend на потребуется componentDidMount()
   async componentDidMount() {
     try {
-      const response = await axios.get(
-        'https://react-quiz-d260e-default-rtdb.firebaseio.com/quizzes.json',
-      );
+      const response = await axios.get('/quizzes.json');
 
       const quizzes = [];
 
