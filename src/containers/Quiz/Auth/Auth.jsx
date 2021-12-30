@@ -55,6 +55,8 @@ export class Auth extends Component {
     //делаем запрос к базе
     try {
       const response = await axios.post(
+        //получить ключ на firebase
+        //Authentication -> Get Started -> (Tab) Sign-in method -> Email/Password, включаем, сохраняем и по инструкции выше находим сгенерированный ApiKey
         'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBHGAzz22mPCTQnJHHkVoC84ahlL0gSTgk',
         authData,
       );
